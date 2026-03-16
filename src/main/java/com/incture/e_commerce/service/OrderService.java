@@ -23,10 +23,13 @@ import com.incture.e_commerce.exception.IdNotFoundException;
 import com.incture.e_commerce.repository.*;
 import com.incture.e_commerce.utils.PaymentSimulator;
 
+import jakarta.transaction.Transactional;
+
 /**
  * Service responsible for handling order related operations.
  */
 @Service
+@Transactional
 public class OrderService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
@@ -55,8 +58,6 @@ public class OrderService {
 	@Autowired
 	private PaymentSimulator paymentSimulator;
 	
-	@Autowired
-    private EmailService emailService;
 	
 	/**
 	 * Performs checkout for a user and creates a new order.
@@ -135,10 +136,10 @@ public class OrderService {
 			OrderItem orderItem = modelMapper.map(cartItem, OrderItem.class);
 			orderItem.setOrder(order);
 			orderItem.setPrice(cartItem.getProduct().getPrice());
-			
-			OrderItem savedOrderItem = orderItemRepository.save(orderItem);			
-			total += savedOrderItem.getPrice() * savedOrderItem.getQuantity();
+					
+			total += orderItem.getPrice() * orderItem.getQuantity();
 
+			OrderItem savedOrderItem = orderItemRepository.save(orderItem);
 			orderItems.add(savedOrderItem);
 		}
 		
@@ -177,10 +178,11 @@ public class OrderService {
 			logger.info("Clearing cart for user {}", userId);
 			cartItemRepository.deleteByCartId(cart.getId());
 			
+			cart.getCartItems().clear();
 			cart.setTotal_price(0);
 			cartRepository.save(cart);
 			
-			emailService.sendOrderConfirmation(user.getEmail(), order.getId());
+			
 		}
 		
 		logger.info("Checkout completed for user {}. Order ID {}", userId, savedOrder.getId());
