@@ -267,14 +267,14 @@ PUT | `/api/orders/{id}/status` | Update order status (Admin) |
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-username/ecommerce-backend.git
+git clone https://github.com/ritpa2005/e-commerce-backend-system.git
 ```
 
 ### 2. Configure Database
 
 Update application.properties
 ```
-spring.datasource.url=jdbc:mysql://localhost:3306/ecommerce_db
+spring.datasource.url=jdbc:mysql://localhost:3306/e_commerce_db
 spring.datasource.username=root
 spring.datasource.password=yourpassword
 ```
